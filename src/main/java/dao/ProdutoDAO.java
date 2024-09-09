@@ -25,9 +25,8 @@ public class ProdutoDAO {
 
     public Produto produtoById(Long id){
         jpaUtil.getEntityManager().getTransaction().begin();
-        var produto = jpaUtil.getEntityManager()
+        return jpaUtil.getEntityManager()
                 .find(Produto.class, id);
-        return produto;
     }
 
     public List<Produto> getAllProdutos(){
@@ -42,7 +41,6 @@ public class ProdutoDAO {
 
     public List<Produto> getAllProdutosByPreco(BigDecimal valor){
 
-        //utilizando jpql
         jpaUtil.getEntityManager().getTransaction().begin();
         // String jpql = "select p from Produto p";
         var query = jpaUtil.getEntityManager()

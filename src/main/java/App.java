@@ -28,10 +28,8 @@ public class App {
                 .build();
 
         var produtoDAO = new ProdutoDAO();
-        //produtoDAO.save(produto);
-       // produtoDAO.save(produto2);
-       // System.out.println(produtoDAO.produtoById(1L));
-        //System.out.println(produtoDAO.getAllProdutos());
+        produtoDAO.save(produto);
+        produtoDAO.save(produto2);
         System.out.println(produtoDAO.getAllProdutosByPreco(BigDecimal.valueOf(30)));
 
     }

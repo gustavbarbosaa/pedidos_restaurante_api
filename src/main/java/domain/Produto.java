@@ -19,7 +19,6 @@ public class Produto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // TODO -> estrategia de geracao de id
     // @SequenceGenerator(name = "produto_sequence", initialValue = 1, allocationSize = 50)
     private Long id;
     private String nome;
