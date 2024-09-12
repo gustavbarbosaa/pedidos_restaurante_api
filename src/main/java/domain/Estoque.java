@@ -6,22 +6,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Entity
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Table(name = "tb_estoque")
 @NamedQueries({
-        @NamedQuery(name = "cardapio.getAll", query = "select e from Estoque e where e.quantidade > 0"),
+        @NamedQuery(name = "estoque.getAll", query = "select e from Estoque e"),
 })
-public class Cardapio {
+public class Estoque {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Produto> produtos;
+
+    @NotEmpty(message = "Campo quantidade é obrigatório!")
+    private Integer quantidade;
 }

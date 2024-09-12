@@ -1,37 +1,39 @@
 package dao;
 
+import domain.Estoque;
 import domain.Pessoa;
+import domain.Produto;
 import lombok.RequiredArgsConstructor;
 import persistence.JPAUtil;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 public class PessoaDAO {
 
-    private JPAUtil jpaUtil;
+    private final JPAUtil jpaUtil;
 
-
-    public void save(Pessoa pessoa) {
-       jpaUtil.getEntityManager().getTransaction().begin();
-       jpaUtil.getEntityManager().persist(pessoa);
-       jpaUtil.getEntityManager().getTransaction().commit();
-       jpaUtil.getEntityManager().close();
-    }
-
-    public Pessoa pessoabyId(Long id) {
+    public void save(Pessoa pessoa){
         jpaUtil.getEntityManager().getTransaction().begin();
-        return jpaUtil.getEntityManager().find(Pessoa.class, id);
+        jpaUtil.getEntityManager().persist(pessoa);
+        jpaUtil.getEntityManager().getTransaction().commit();
+        jpaUtil.getEntityManager().close();
     }
 
-    public List<Pessoa> getPessoas() {
+    public String realizarPedido(Long produtoId, int quantidade) {
         jpaUtil.getEntityManager().getTransaction().begin();
-        var query = jpaUtil.getEntityManager().createNamedQuery("pessoa.getAll");
+        Estoque estoque = jpaUtil.getEntityManager().find(Estoque.class, produtoId);
 
-        return query.getResultList();
+        if (estoque.getQuantidade().equals(0)) {
+            jpaUtil.getEntityManager().getTransaction().rollback();
+            return "Produto indiponível";
+        } else if (estoque.getQuantidade() < quantidade) {
+            jpaUtil.getEntityManager().getTransaction().rollback();
+            return "Só temos essa quantidade de itens: " + estoque.getQuantidade();
+        }
+
+        estoque.setQuantidade(estoque.getQuantidade() - quantidade);
+        jpaUtil.getEntityManager().merge(estoque);
+        jpaUtil.getEntityManager().getTransaction().commit();
+
+        return "Pedido realizado com sucesso!";
     }
-
-    
-
-
 }

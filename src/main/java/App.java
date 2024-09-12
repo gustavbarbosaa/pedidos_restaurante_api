@@ -1,36 +1,42 @@
-import dao.ProdutoDAO;
+import dao.CardapioDAO;
+import dao.PessoaDAO;
+import domain.Cardapio;
+import domain.Estoque;
 import domain.Produto;
+import persistence.JPAUtil;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import java.math.BigDecimal;
+import java.sql.SQLOutput;
+import java.util.List;
+import java.util.Scanner;
+
 
 public class App {
 
     public static void main(String[] args) {
 
-        var produto = Produto.builder()
-                .categoria("Entrada")
-                .descricao("Batata Frita com queijo ralado")
-                //.id(1L)
-                .disponivel(true)
-                .nome("Batata Frita")
-                .preco(BigDecimal.valueOf(20))
-                .build();
+        System.out.println("Seja bem vindo ao guguinha restaurante!");
 
-        var produto2 = Produto.builder()
-                .categoria("Prato Principal")
-                .descricao("Churrasco a moda da casa")
-                //.id(1L)
-                .disponivel(true)
-                .nome("Churrasco")
-                .preco(BigDecimal.valueOf(50))
-                .build();
+        System.out.println("Estes são nossos produtos disponíveis: ");
+        var cardapioDAO = new CardapioDAO();
+        List<Estoque> produtosCardapio = cardapioDAO.getCardapio();
 
-        var produtoDAO = new ProdutoDAO();
-        produtoDAO.save(produto);
-        produtoDAO.save(produto2);
-        System.out.println(produtoDAO.getAllProdutosByPreco(BigDecimal.valueOf(30)));
+        for (Estoque produtoCardapio : produtosCardapio) {
+            for (Produto produto : produtoCardapio.getProdutos()) {
+                System.out.println(String.format("%-30s %10.2f", "ID:" + produto.getId() + "-> " + produto.getNome(), produto.getPreco()));
+                System.out.println("Quantidade: " + produtoCardapio.getQuantidade());
+            }
+        }
 
+        System.out.println("Informe o ID do item: ");
+        Scanner scanner = new Scanner(System.in);
+        Long idItem = scanner.nextLong();
+
+        System.out.println("Informe a quantidade de itens: ");
+        int quantidadeItens = scanner.nextInt();
+
+        var jpaUtil = new JPAUtil();
+        var pessoaDAO = new PessoaDAO(jpaUtil);
+
+        System.out.println(pessoaDAO.realizarPedido(idItem, quantidadeItens));
     }
 }
